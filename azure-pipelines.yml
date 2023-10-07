@@ -3,8 +3,11 @@
     
   pool:
     vmImage: ubuntu-latest
+    demands:
+      - npm
 
   variables:
+    buildConfiguration: 'Release'
     wwwrootDir: 'Tailspin.SpaceGame.Web/wwwroot'
     dotnetSdkVersion: '6.x'  
   
@@ -35,15 +38,23 @@
     inputs:
       command: 'restore'
       projects: '**/*.csproj'
-  
-  - template: templates/build.yml
-    parameters:
-      buildConfiguration: 'Debug'
 
   - template: templates/build.yml
     parameters:
       buildConfiguration: 'Release'
-      
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Run unit tests - $(buildConfiguration)'
+    inputs:
+      command: 'test'
+      arguments: '--no-build --configuration $(buildConfiguration)'
+      publishTestResults: true
+      projects: '**/*.Tests.csproj'
+
+  - template: templates/publish.yml
+    parameters:
+      buildConfiguration: 'Release'
+
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifact: drop'
     inputs:
