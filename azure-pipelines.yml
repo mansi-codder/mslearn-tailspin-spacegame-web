@@ -38,6 +38,8 @@
     inputs:
       command: 'restore'
       projects: '**/*.csproj'
+      feedsToUse: 'select'
+      vstsFeed: 'Space Game - web - Dependencies/Tailspin.SpaceGame.Web.Model'
 
   - template: templates/build.yml
     parameters:
